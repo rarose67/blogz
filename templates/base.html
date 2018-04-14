@@ -10,8 +10,20 @@
         <nav>
             <a href="/blog">Go back to to the home page.</a> |
             <a href="/new-post">Add a new Entry</a> 
-        </nav>                    
+        </nav>    
+        <div>
+            <a href="/logout">logout</a>
+        </div>                
     </header>
+    
+
+    {% with messages = get_flashed_messages(with_categories=True) %}
+        <ul>
+        {% for category,message in messages %}
+            <li class="{{category}}">{{message}}</li>
+        {% endfor %}
+        </ul>
+    {% endwith %}
 
     {% block content %}
     {% endblock %}

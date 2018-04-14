@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Signup for a new account.</h1>
+<br>
+<form action="/signup" method="post">
+    <label for="email">Email:</label>
+    {% if eerror %}
+    <input id="email" class="ierror" type="text" name="email" value="{{email}}" />
+    {% else %}
+    <input id="email" type="text" name="email" value="{{email}}" />
+    {% endif %}
+    <br>
+    <label for="password">Password:</label>
+    {% if perror %}
+    <input id="password" class="ierror" type="password" name="password" value="" />
+    {% else %}
+    <input id="password" type="password" name="password" value="" />
+    {% endif %}
+    <br>
+    <label for="verify">Verify Password:</label>
+    {% if merror %}
+    <input id="verify" class="ierror" type="password" name="verify" value="" />
+    {% else %}
+    <input id="verify" type="password" name="verify" value="" />
+    {% endif %}
+    <br>
+    <input type="submit" />
+</form>
+{% endblock %}

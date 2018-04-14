@@ -9,7 +9,7 @@
     {% else %}
          {% for blog in blogs %}
          <div>
-            <a href="http://127.0.0.1:5000/blog?id={{blog.id}}">{{blog.title}}</a>
+            <a href="/blog?id={{blog.id}}">{{blog.title}}</a>
             <p>{{blog.body}}</p>
             <hr />
          </div>
