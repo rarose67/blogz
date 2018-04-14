@@ -3,7 +3,7 @@
 {% block content %}
 <h1 class="page-title">Add a new Blog Entry</h1>
 <br>
-<form action="/add-entry" method="post">
+<form id="new-post" action="/add-entry" method="post">
     <label for="title">Please enter the blog's title:</label>
     {% if terror %}
     <input id="title" class="ierror" type="text" name="blog_title" value="{{blog_title}}"/>

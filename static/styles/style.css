@@ -1,15 +1,13 @@
-html{
-    background-color: aqua;
+html {
+    background-color: azure;
 }
 
 form {
     background-color: #eee;
-    padding: 20px;
-    margin: 0 auto;
-    width: 540px;
     font: 16px sans-serif;
     border-radius: 10px;
 }
+
 textarea {
     margin: 10px 0;
     width: 540px;
@@ -22,6 +20,12 @@ textarea {
 
 .ierror {
     background-color: yellow;
+}
+
+#new-post {
+    padding: 20px;
+    margin: 0 auto;
+    width: 540px;
 }
 
 .page-title {
