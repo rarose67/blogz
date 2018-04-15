@@ -22,12 +22,16 @@ textarea {
     background-color: yellow;
 }
 
+.page-title {
+    text-align: center;
+}
+
 #new-post {
     padding: 20px;
     margin: 0 auto;
     width: 540px;
 }
 
-.page-title {
-    text-align: center;
+#logout {
+    float: right;
 }

@@ -4,11 +4,11 @@
 <h1>Signup for a new account.</h1>
 <br>
 <form action="/signup" method="post">
-    <label for="email">Email:</label>
-    {% if eerror %}
-    <input id="email" class="ierror" type="text" name="email" value="{{email}}" />
+    <label for="username">username:</label>
+    {% if uerror %}
+    <input id="username" class="ierror" type="text" name="username" value="{{username}}" />
     {% else %}
-    <input id="email" type="text" name="email" value="{{email}}" />
+    <input id="username" type="text" name="username" value="{{username}}" />
     {% endif %}
     <br>
     <label for="password">Password:</label>

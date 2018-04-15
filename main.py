@@ -1,7 +1,7 @@
 from flask import Flask, request, redirect, render_template, session, flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import desc
-import re
+#import re
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
@@ -30,15 +30,13 @@ class Blog(db.Model):
 class User(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(120), unique=True)
+    username = db.Column(db.String(120), unique=True)
     password = db.Column(db.String(120))
     blogs = db.relationship("Blog", backref="owner")
 
-    def __init__(self, email, password):
-        self.email =email
+    def __init__(self, username, password):
+        self.username =username
         self.password = password
-
-
 
 @app.route('/')
 def index():
@@ -47,7 +45,7 @@ def index():
 
 #route for displaying a list of blog entries
 @app.route('/blog')
-def blog_list():
+def blog():
     #Retrieve query arguments for the url if the user was redirected here.
     blog_id = request.args.get("id")
 
@@ -69,43 +67,43 @@ def blog_list():
 #route for redirecting to the login page
 @app.before_request
 def require_login():
-    allowed_routes = ['login', 'signup']
-    if (request.endpoint not in allowed_routes) and ('email' not in session):
+    allowed_routes = ['login', 'signup', 'blog']
+    if (request.endpoint not in allowed_routes) and ('username' not in session):
         return redirect("/login")
 
 #route for the login page
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     if request.method == 'POST':
-        email = request.form['email']
+        username = request.form['username']
         password = request.form['password']
-        user = User.query.filter_by(email=email).first()
+        user = User.query.filter_by(username=username).first()
         if (user and user.password == password):
-            session['email'] = email
+            session['username'] = username
             flash("Logged in")
-            return redirect("/")
+            return redirect("/new-post")
         else:
             flash("Password incorrect or user doesn't exsist.", "error")
 
-    return render_template('login.html',title="login", email="")
+    return render_template('login.html',title="login", username="")
 
 #route for signing up for new account 
 @app.route("/signup", methods=['POST', 'GET'])
 def signup():
     if request.method == 'POST':
         #get form data
-        email = request.form['email']
+        username = request.form['username']
         password = request.form['password']
         verify = request.form['verify']
 
         #initialize error messages
         pass_error = False
         match_error = False
-        email_error = False
+        user_error = False
         error_query = ""
     
-        #Regular expression used for email validation 
-        regex = re.compile(r"[\w-]+@[\w-]+\.\w+")
+        #Regular expression used for username validation 
+        #regex = re.compile(r"[\w-]+@[\w-]+\.\w+")
     
         if (password == ""):
             # the user tried to enter an invalid password,
@@ -120,17 +118,18 @@ def signup():
             # so we redirect back to the front page and tell them what went wrong
             flash("The passwords did not match", "error")
             match_error = True
-        if(email != ""):  #The email field can be left blank
-            valid_email = regex.match(email) #does the email match the regular expression. 
-            if(len(email) < 3) or (len(email) > 20) or (not valid_email):
-                # the user tried to enter an invalid email address,
-                # so we redirect back to the front page and tell them what went wrong
-                flash("The email must be 3-20 characters, must contain a single '@' and a single '.', and can't contain spaces",
-                "error")
-                email_error = True
         
-        if (email_error):
-            error_query += "&eerror=" + str(email_error)
+        #valid_email = regex.match(username) #does the username match the regular expression. 
+        #if(len(username) < 3) or (len(username) > 20) or (not valid_email):
+        if(len(username) < 3) or (len(username) > 20) or (" " in username): 
+            # the user tried to enter an invalid username,
+            # so we redirect back to the front page and tell them what went wrong
+            flash("The username must be 3-20 characters, and can't contain spaces",
+            "error")
+            user_error = True
+        
+        if (user_error):
+            error_query += "&uerror=" + str(user_error)
     
         if (pass_error):
             error_query += "&perror=" + str(pass_error)
@@ -140,33 +139,36 @@ def signup():
 
         if (error_query != ""):
             # redirect to homepage, and include error as a query parameter in the URL.
-            return redirect("/signup?email=" + email + error_query)
+            return redirect("/signup?username=" + username + error_query)
         else:    
             # if we didn't redirect by now, then all is well
-            exsisting_user = User.query.filter_by(email=email).first()
+            exsisting_user = User.query.filter_by(username=username).first()
         
             if (not (exsisting_user)):
-                new_user = User(email, password)
+                new_user = User(username, password)
                 db.session.add(new_user)
                 db.session.commit()
             
-                return redirect("/login")
+                session['username'] = username
+                flash("Registered & Logged in")
+                return redirect("/new-post")
             else:
                 flash("That user already exsist", "error")
+                return redirect("/signup")
     else:
         #Retrieve query arguments for the url if the user was redirected here.
-        email = request.args.get("email")
+        username = request.args.get("username")
         perror = bool(request.args.get("perror"))
         merror = bool(request.args.get("merror"))
-        eerror = bool(request.args.get("eerror"))
+        uerror = bool(request.args.get("uerror"))
 
-        #If the email aren't sent as query parameters the previous statements set to None.
+        #If the username aren't sent as query parameters the previous statements set to None.
         #In that case, it needs to be set to empty strings.
-        if email == None:
-            email = ""
+        if username == None:
+            username = ""
 
         #display the signup form.
-        return render_template("signup.html", title="User Signup", email=email, perror=perror, merror=merror, eerror=eerror)
+        return render_template("signup.html", title="User Signup", username=username, perror=perror, merror=merror, uerror=uerror)
 
 #route for displaying the form to add a new blog entry.
 @app.route('/new-post')
@@ -222,7 +224,7 @@ def add_entry():
     else:    
         # if we didn't redirect by now, then all is well
 
-        owner = User.query.filter_by(email=session['email']).first()
+        owner = User.query.filter_by(username=session['username']).first()
         #Add new blog entry to the database
         new_blog = Blog(blog_name, blog_text, owner)
         db.session.add(new_blog)
@@ -240,8 +242,8 @@ def add_entry():
 
 @app.route("/logout")
 def logout():
-    del session['email']
-    return redirect("/")
+    del session['username']
+    return redirect("/blog")
 
 if __name__ == "__main__":
     app.run()

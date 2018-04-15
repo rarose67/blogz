@@ -11,9 +11,11 @@
             <a href="/blog">Go back to to the home page.</a> |
             <a href="/new-post">Add a new Entry</a> 
         </nav>    
-        <div>
-            <a href="/logout">logout</a>
-        </div>                
+        {% if 'username' in session %}
+            <div>
+                <a id="logout" href="/logout">logout</a>
+            </div>
+        {% endif %}              
     </header>
     
 
