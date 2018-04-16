@@ -26,12 +26,12 @@ textarea {
     text-align: center;
 }
 
+.in-out {
+    float: right;
+}
+
 #new-post {
     padding: 20px;
     margin: 0 auto;
     width: 540px;
-}
-
-#logout {
-    float: right;
 }
