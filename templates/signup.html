@@ -4,27 +4,33 @@
 <h1>Signup for a new account.</h1>
 <br>
 <form action="/signup" method="post">
-    <label for="username">username:</label>
-    {% if uerror %}
-    <input id="username" class="ierror" type="text" name="username" value="{{username}}" />
-    {% else %}
-    <input id="username" type="text" name="username" value="{{username}}" />
-    {% endif %}
+    <table>
+        <tr>
+            <td><label for="username">Username:</label></td>
+            {% if uerror %}
+            <td><input id="username" class="ierror" type="text" name="username" value="{{username}}" /></td>
+            {% else %}
+            <td><input id="username" type="text" name="username" value="{{username}}" /></td>
+            {% endif %}
+        </tr>
+        <tr>
+            <td><label for="password">Password:</label></td>
+            {% if perror %}
+            <td><input id="password" class="ierror" type="password" name="password" value="" /></td>
+            {% else %}
+            <td><input id="password" type="password" name="password" value="" /></td>
+            {% endif %}
+        </tr>
+        <tr>
+            <td><label for="verify">Verify Password:</label></td>
+            {% if merror %}
+            <td><input id="verify" class="ierror" type="password" name="verify" value="" /></td>
+            {% else %}
+            <td><input id="verify" type="password" name="verify" value="" /></td>
+            {% endif %}
+        </tr>
+    </table>
     <br>
-    <label for="password">Password:</label>
-    {% if perror %}
-    <input id="password" class="ierror" type="password" name="password" value="" />
-    {% else %}
-    <input id="password" type="password" name="password" value="" />
-    {% endif %}
-    <br>
-    <label for="verify">Verify Password:</label>
-    {% if merror %}
-    <input id="verify" class="ierror" type="password" name="verify" value="" />
-    {% else %}
-    <input id="verify" type="password" name="verify" value="" />
-    {% endif %}
-    <br>
-    <input type="submit" />
+    <input type="submit" value="submit"/>
 </form>
 {% endblock %}
