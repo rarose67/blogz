@@ -67,6 +67,7 @@ def blog():
 #route for redirecting to the login page
 @app.before_request
 def require_login():
+    #initialize list of allowed routes, the 'static' entry allows acess to the css when not logged in.
     allowed_routes = ['static', 'login', 'signup', 'blog']
     if (request.endpoint not in allowed_routes) and ('username' not in session):
         return redirect("/login")
