@@ -64,9 +64,10 @@ def blog():
         user_id = int(user_id)
         user = User.query.filter_by(id=user_id).first()
         uname = user.username
-        #blogs = Blog.query.filter_by(owner_id=user_id).all()
+
         #show all blog entries in desending order 
         blogs = Blog.query.filter_by(owner_id=user_id).order_by((desc(Blog.id))).all()
+        
         return render_template('blog-listing.html', title="Blog List", user=uname, blogs=blogs)
     else:
         #show all blog entries in asending order 
