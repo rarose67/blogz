@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1 class="page-title">Welcome to <em>Blogz!</em></h1>
+    <hr />
+    <a href="/blog">View everyone's blogs.</a> 
+    <br>
+    <br>
+    <h2>View a person's blog.</h2>
+    {% for user in users %}
+        <div>
+            <a href="/blog?uid={{user.id}}">{{user.username}}'s blogs</a>
+        </div>
+    {% endfor %}
+{% endblock %} 

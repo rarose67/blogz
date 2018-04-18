@@ -1,7 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1 class="page-title">Build a Blog</h1>
+    {% if user %}
+        <h1 class="page-title">{{ user}}'s Blog</h1>
+    {% else %}
+        <h1 class="page-title">Everyone's Blogs</h1>
+    {% endif %}
     <hr />
 
     {% if blogs|length == 0 %}
@@ -9,7 +13,7 @@
     {% else %}
          {% for blog in blogs %}
          <div>
-            <a href="/blog?id={{blog.id}}">{{blog.title}}</a>
+            <a href="/blog?bid={{blog.id}}">{{blog.title}}</a>
             <p>{{blog.body}}</p>
             <hr />
          </div>

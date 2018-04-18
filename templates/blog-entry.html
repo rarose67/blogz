@@ -3,5 +3,7 @@
 {% block content %}
 <h1 class="page-title">{{blog.title}}</h1>
 <br>
+<p class="author">Written By: {{blog.owner.username}}</p>
+<br>
 <p>{{blog.body}}</p>
 {% endblock %}

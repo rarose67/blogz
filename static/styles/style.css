@@ -26,6 +26,11 @@ textarea {
     text-align: center;
 }
 
+.author {
+    text-align: center;
+    font-family: cursive;
+}
+
 .in-out {
     float: right;
 }

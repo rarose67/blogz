@@ -41,20 +41,33 @@ class User(db.Model):
 @app.route('/')
 def index():
 
-    return redirect("/blog")
+    users = User.query.all()
+    return render_template('index.html', title="Welcome to Blogz", users=users)
 
 #route for displaying a list of blog entries
 @app.route('/blog')
 def blog():
     #Retrieve query arguments for the url if the user was redirected here.
-    blog_id = request.args.get("id")
+    user_id = request.args.get("uid")
+    blog_id = request.args.get("bid")
 
     # if the url contain query arguments, display the log entry associated with the id 
     # in the query argument
     if(blog_id):
         blog_id = int(blog_id)
         blog = Blog.query.filter_by(id=blog_id).first()
-        return render_template('blog-entry.html', title="Blog Entry", blog=blog)
+        user_id = blog.owner_id
+        user = User.query.filter_by(id=user_id).first()
+        uname = user.username
+        return render_template('blog-entry.html', title="Blog Entry", user=uname, blog=blog)
+    elif (user_id):
+        user_id = int(user_id)
+        user = User.query.filter_by(id=user_id).first()
+        uname = user.username
+        #blogs = Blog.query.filter_by(owner_id=user_id).all()
+        #show all blog entries in desending order 
+        blogs = Blog.query.filter_by(owner_id=user_id).order_by((desc(Blog.id))).all()
+        return render_template('blog-listing.html', title="Blog List", user=uname, blogs=blogs)
     else:
         #show all blog entries in asending order 
         #blogs = Blog.query.all()
@@ -68,7 +81,7 @@ def blog():
 @app.before_request
 def require_login():
     #initialize list of allowed routes, the 'static' entry allows acess to the css when not logged in.
-    allowed_routes = ['static', 'login', 'signup', 'blog']
+    allowed_routes = ['static', 'index', 'login', 'signup', 'blog']
     if (request.endpoint not in allowed_routes) and ('username' not in session):
         return redirect("/login")
 
@@ -231,15 +244,10 @@ def add_entry():
         db.session.add(new_blog)
         db.session.commit()
         
-        #Use Case 1
-        #return to the list of all blog entries
-        #return redirect("/blog")
-
-        #Use Case 2
         #Show the new blog entry
 
         blog_id = str(new_blog.id)
-        return redirect("/blog?id=" + blog_id)
+        return redirect("/blog?bid=" + blog_id)
 
 @app.route("/logout")
 def logout():
