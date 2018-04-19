@@ -7,15 +7,14 @@
     <label for="title">Please enter the blog's title:</label>
     {% if terror %}
     <input id="title" class="ierror" type="text" name="blog_title" value="{{blog_title}}"/>
-    <span class="error">{{ terror }} </span>
     {% else %}
     <input id="title" type="text" name="blog_title" value="{{blog_title}}"/>
     {% endif %}
     <br>
+    <br>
     <label for="blog-text">Please enter the text for the blog entry:</label>
     {% if berror %}
     <textarea id="blog-text" name="blog_text" class="ierror">{{blog_post}}</textarea>
-    <span class="error">{{ berror }} </span>
     {% else %}
     <textarea id="blog-text" name="blog_text">{{blog_post}}</textarea>
     {% endif %}

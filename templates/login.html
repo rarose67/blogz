@@ -8,13 +8,21 @@
         <tr>
             <td><label for="username">username</label></td>
             <td>
-                <input name="username" type="username" value="{{ username }}">
+                {% if ferror %}
+                    <input class="ierror" name="username" type="username" value="{{ username }}">
+                {% else %}
+                    <input name="username" type="username" value="{{ username }}">
+                {% endif %}
             </td>
         </tr>
         <tr>
             <td><label for="password">Password</label></td>
             <td>
-                <input name="password" type="password">
+                {% if ferror %}
+                    <input class="ierror" name="password" type="password">
+                {% else %}
+                    <input name="password" type="password">
+                {% endif %}
             </td>
         </tr>
     </table>

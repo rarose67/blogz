@@ -1,7 +1,6 @@
 from flask import Flask, request, redirect, render_template, session, flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import desc
-#import re
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
@@ -51,15 +50,20 @@ def blog():
     user_id = request.args.get("uid")
     blog_id = request.args.get("bid")
 
-    # if the url contain query arguments, display the log entry associated with the id 
+    # if the url contains a blog id argument, display the blog entry associated with the id 
     # in the query argument
     if(blog_id):
         blog_id = int(blog_id)
-        blog = Blog.query.filter_by(id=blog_id).first()
+        blog = Blog.query.filter_by(id=blog_id).first() #find blog record
+
+        #find username associated with the blog entry.
         user_id = blog.owner_id
-        user = User.query.filter_by(id=user_id).first()
+        user = User.query.filter_by(id=user_id).first() 
         uname = user.username
+
         return render_template('blog-entry.html', title="Blog Entry", user=uname, blog=blog)
+    # if the url contains a user id query argument, display all the blog entries associated with the id 
+    # in the query argument
     elif (user_id):
         user_id = int(user_id)
         user = User.query.filter_by(id=user_id).first()
@@ -89,18 +93,29 @@ def require_login():
 #route for the login page
 @app.route('/login', methods=['POST', 'GET'])
 def login():
+    error = False
+
+    #get form data
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+
+        #query the database to find the user record.
         user = User.query.filter_by(username=username).first()
+        #if the user exsist, and the password matches the one in the database, log the user in.
         if (user and user.password == password):
             session['username'] = username
             flash("Logged in")
             return redirect("/new-post")
+        #otherwise, display an error message
+        elif (not user):
+            flash("User doesn't exsist.", "error")
+            error = True
         else:
-            flash("Password incorrect or user doesn't exsist.", "error")
+            flash("Password incorrect.", "error")
+            error = True
 
-    return render_template('login.html',title="login", username="")
+    return render_template('login.html',title="login", username="", ferror=error)
 
 #route for signing up for new account 
 @app.route("/signup", methods=['POST', 'GET'])
@@ -117,9 +132,6 @@ def signup():
         user_error = False
         error_query = ""
     
-        #Regular expression used for username validation 
-        #regex = re.compile(r"[\w-]+@[\w-]+\.\w+")
-    
         if (password == ""):
             # the user tried to enter an invalid password,
             # so we redirect back to the front page and tell them what went wrong
@@ -134,8 +146,6 @@ def signup():
             flash("The passwords did not match", "error")
             match_error = True
         
-        #valid_email = regex.match(username) #does the username match the regular expression. 
-        #if(len(username) < 3) or (len(username) > 20) or (not valid_email):
         if(len(username) < 3) or (len(username) > 20) or (" " in username): 
             # the user tried to enter an invalid username,
             # so we redirect back to the front page and tell them what went wrong
@@ -221,11 +231,13 @@ def add_entry():
         # the user tried to enter a blank blog title
         # so we redirect back to the form page and tell them what went wrong
         title_error = "Please enter title for your blog entry."
+        flash(title_error, "error")
     
     if (blog_text == ""):
         # the user tried to enter a blank post body,
         # so we redirect back to the form page and tell them what went wrong
         body_error = "Please enter the body of your blog entry."
+        flash(body_error, "error")
 
     if (title_error != ""):
             error_query += "&terror=" + title_error
