@@ -138,6 +138,19 @@ def signup():
         match_error = False
         user_error = False
         error_query = ""
+
+        #query the database to find the user record.
+        user = User.query.filter_by(username=username).first()
+        #if the user exsist, and the password matches the one in the database, thow an error
+        if user:
+            flash("That user account already exsist.", "error")
+            user_error = True
+        elif(len(username) < 3) or (len(username) > 20) or (" " in username): 
+            # the user tried to enter an invalid username,
+            # so we redirect back to the front page and tell them what went wrong
+            flash("The username must be 3-20 characters, and can't contain spaces",
+            "error")
+            user_error = True
     
         if (password == ""):
             # the user tried to enter an invalid password,
@@ -152,13 +165,6 @@ def signup():
             # so we redirect back to the front page and tell them what went wrong
             flash("The passwords did not match", "error")
             match_error = True
-        
-        if(len(username) < 3) or (len(username) > 20) or (" " in username): 
-            # the user tried to enter an invalid username,
-            # so we redirect back to the front page and tell them what went wrong
-            flash("The username must be 3-20 characters, and can't contain spaces",
-            "error")
-            user_error = True
         
         if (user_error):
             error_query += "&uerror=" + str(user_error)

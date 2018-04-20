@@ -20,22 +20,24 @@
         {% endfor %}
     {% endif %}
     <footer>
-        <div>            
-            {% for blog_page in blogs.iter_pages() %}
-                {% if blog_page %}
-                    {% if blog_page != blogs.page %}
-                        {% if user %}
-                            <a href="{{ url_for('blog', uid=user.id, pagenum=blog_page) }}">{{blog_page}}</a>
-                        {% else%}   
-                            <a href="{{ url_for('blog', pagenum=blog_page) }}">{{blog_page}}</a>
+        {% if blogs.pages > 1 %}
+            <div>            
+                {% for blog_page in blogs.iter_pages() %}
+                    {% if blog_page %}
+                        {% if blog_page != blogs.page %}
+                            {% if user %}
+                                <a href="{{ url_for('blog', uid=user.id, pagenum=blog_page) }}">{{blog_page}}</a>
+                            {% else%}   
+                                <a href="{{ url_for('blog', pagenum=blog_page) }}">{{blog_page}}</a>
+                            {% endif %}
+                        {% else %}
+                            <strong>{{blog_page}}</strong>
                         {% endif %}
                     {% else %}
-                        <strong>{{blog_page}}</strong>
+                        ...
                     {% endif %}
-                {% else %}
-                    ...
-                {% endif %}
-            {% endfor %}
-        </div>
+                {% endfor %}
+            </div>
+        {% endif %}
     </footer>
 {% endblock %}
