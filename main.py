@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, render_template, session, flash
+from flask import Flask, request, redirect, render_template, session, flash, url_for
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import desc
 
@@ -34,7 +34,7 @@ class User(db.Model):
     blogs = db.relationship("Blog", backref="owner")
 
     def __init__(self, username, password):
-        self.username =username
+        self.username = username
         self.password = password
 
 @app.route('/')
@@ -49,6 +49,12 @@ def blog():
     #Retrieve query arguments for the url if the user was redirected here.
     user_id = request.args.get("uid")
     blog_id = request.args.get("bid")
+    page_num = request.args.get("pagenum")
+
+    if page_num:
+        page_num = int(page_num)
+    else:
+        page_num = 1
 
     # if the url contains a blog id argument, display the blog entry associated with the id 
     # in the query argument
@@ -67,18 +73,18 @@ def blog():
     elif (user_id):
         user_id = int(user_id)
         user = User.query.filter_by(id=user_id).first()
-        uname = user.username
 
         #show all blog entries in desending order 
-        blogs = Blog.query.filter_by(owner_id=user_id).order_by((desc(Blog.id))).all()
+        blogs = Blog.query.filter_by(owner_id=user_id).order_by((desc(Blog.id))).paginate(page_num, 5, False)
         
-        return render_template('blog-listing.html', title="Blog List", user=uname, blogs=blogs)
+        return render_template('blog-listing.html', title="Blog List", user=user, blogs=blogs)
     else:
+        
         #show all blog entries in asending order 
         #blogs = Blog.query.all()
 
         #show all blog entries in desending order 
-        blogs = Blog.query.order_by((desc(Blog.id))).all()
+        blogs = Blog.query.order_by((desc(Blog.id))).paginate(page_num, 5, False)
 
         return render_template('blog-listing.html', title="Blog List", blogs=blogs)
 

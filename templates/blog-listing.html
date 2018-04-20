@@ -2,16 +2,16 @@
 
 {% block content %}
     {% if user %}
-        <h1 class="page-title">{{ user}}'s Blog</h1>
+        <h1 class="page-title">{{ user.username }}'s Blog</h1>
     {% else %}
         <h1 class="page-title">Everyone's Blogs</h1>
     {% endif %}
     <hr />
 
-    {% if blogs|length == 0 %}
+    {% if blogs.items|length == 0 %}
     <p>No blogs yet</p>
     {% else %}
-         {% for blog in blogs %}
+         {% for blog in blogs.items %}
          <div>
             <a href="/blog?bid={{blog.id}}">{{blog.title}}</a>
             <p>{{blog.body}}</p>
@@ -19,4 +19,23 @@
          </div>
         {% endfor %}
     {% endif %}
+    <footer>
+        <div>            
+            {% for blog_page in blogs.iter_pages() %}
+                {% if blog_page %}
+                    {% if blog_page != blogs.page %}
+                        {% if user %}
+                            <a href="{{ url_for('blog', uid=user.id, pagenum=blog_page) }}">{{blog_page}}</a>
+                        {% else%}   
+                            <a href="{{ url_for('blog', pagenum=blog_page) }}">{{blog_page}}</a>
+                        {% endif %}
+                    {% else %}
+                        <strong>{{blog_page}}</strong>
+                    {% endif %}
+                {% else %}
+                    ...
+                {% endif %}
+            {% endfor %}
+        </div>
+    </footer>
 {% endblock %}
